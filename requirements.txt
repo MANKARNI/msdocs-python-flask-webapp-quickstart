@@ -1,3 +1,9 @@
 Flask==2.2.2
 gunicorn
 Werkzeug==2.2.2
+promptflow==1.14.0
+promptflow-core==1.14.0
+promptflow-devkit==1.14.0
+promptflow-tracing==1.14.0
+jsonschema==4.23.0
+jsonschema-specifications==2023.12.1
