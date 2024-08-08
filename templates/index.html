@@ -1,30 +1,141 @@
-<!doctype html>
-<head>
-    <title>Hello Azure - Python Quickstart</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-</head>
-<html>
-   <body>
-     <main>
-        <div class="px-4 py-3 my-2 text-center">
-            <img class="d-block mx-auto mb-4" src="{{ url_for('static', filename='images/azure-icon.svg') }}" alt="Azure Logo" width="192" height="192"/>
-            <!-- <img  src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
-            <h1 class="display-6 fw-bold text-primary">Welcome to Azure</h1>            
-          </div>
-        <form method="post" action="{{url_for('hello')}}">
-            <div class="col-md-6 mx-auto text-center">
-                <label for="name" class="form-label fw-bold fs-5">Could you please tell me your name?</label>
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>ETL Convy</title>  
+    <style>  
+        body {  
+            font-family: Arial, sans-serif;  
+            background-color: #f0f8ff;  
+            display: flex;  
+            justify-content: center;  
+            align-items: center;  
+            flex-direction: column;  
+            height: 100vh;  
+            margin: 0;  
+        }  
+  
+        .header {  
+            background-color: #007bff;  
+            color: white;  
+            padding: 10px 20px;  
+            border-radius: 5px;  
+            margin-bottom: 20px;  
+            text-align: center;  
+            width: 90%;  
+        }  
+  
+        .container {  
+            background-color: #ffffff;  
+            border-radius: 10px;  
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);  
+            padding: 30px;  
+            text-align: center;  
+            width: 300px;  
+        }  
+  
+        h1 {  
+            color: #333;  
+            margin-bottom: 20px;  
+        }  
+  
+        label {  
+            font-size: 16px;  
+            color: #555;  
+        }  
+  
+        input[type="file"] {  
+            margin: 20px 0;  
+            padding: 10px;  
+            border: 2px solid #007bff;  
+            border-radius: 5px;  
+            width: 100%;  
+            background-color: #e7f0ff;  
+            transition: border 0.3s;  
+        }  
+        input[type="file"]:hover {  
+            border-color: #0056b3;  
+        }
+        input[type="submit"] {  
+            background-color: #007bff;  
+            color: white;  
+            border: none;  
+            border-radius: 5px;  
+            padding: 10px 15px;  
+            cursor: pointer;  
+            transition: background-color 0.3s;  
+            font-size: 16px;  
+        }  
+        input[type="submit"]:hover {  
+            background-color: #0056b3;  
+        }    
+        footer {  
+            margin-top: 20px;  
+            font-size: 12px;  
+            color: #777;  
+        }  
+    </style>  
+</head>  
+<body>  
+    <div class="header">  
+        <h1>ETL Convy</h1>  
+        <h2>Service to Convert Informatical ETL Files to Azure Data Factory Template</h2>
+    </div>    
+    <div class="container">  
+        <h1>Upload XML File</h1>  
+        <form id="uploadForm" action="#" method="POST" enctype="multipart/form-data">  
+            <label for="fileUpload">Choose an XML file:</label>  
+            <input type="file" id="fileUpload" name="fileUpload" accept=".xml" required>  
+            <br>  
+            <input type="submit" value="Upload">  
+        </form>  
+        <footer>  
+            &copy; 2023 ETL Convy  
+        </footer>  
+    </div>    
+    <script>
+        document.getElementById('uploadForm').onsubmit = async function(event) {
+            event.preventDefault(); // Prevent the default form submission
 
-                <!-- <p class="lead mb-2">Could you please tell me your name?</p> -->
-                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center align-items-center my-1">
-                    <input type="text" class="form-control" id="name" name="name" style="max-width: 256px;">
-                  </div>            
-                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center my-2">
-                  <button type="submit" class="btn btn-primary btn-lg px-4 gap-3">Say Hello</button>
-                </div>            
-            </div>
-        </form>
-     </main>      
-   </body>
-</html>
+            const fileInput = document.getElementById('fileUpload');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('/uploads', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (response.ok) {
+                        const jsonResponse = await response.json();
+                        console.log(jsonResponse); // Log the Python response
+                        // Create a download button and append it to the body
+                        const downloadButton = document.createElement('a');
+                        downloadButton.href = '/download/response.json';
+                        downloadButton.textContent = 'Download JSON';
+                        downloadButton.download = 'response.json';
+                        downloadButton.className = 'download-button'; // Add a class for styling if needed
+
+                        // Append the download button to the container div
+                        document.querySelector('.container').appendChild(downloadButton);
+
+                    } else {
+                        console.error('Error calling Python backend');
+                    }
+                } catch (error) {
+                    console.error('An error occurred:', error);
+                }
+            } else {
+                alert('Please select an XML file to upload.');
+            }
+        };
+    </script>
+    <!-- <br>    
+    <a href="/download/response.json" download>Download JSON</a> -->
+</body>  
+</html>  
